@@ -26,7 +26,7 @@ int Walker::walk() {
 }
 
 void Walker::recursive(const std::string& path) {
-    std::vector<std::string> files;
+    std::vector <std::string> files;
     fillFiles(path, files);
     for (const auto& f: files) {
         if (match(f)) {
@@ -52,7 +52,7 @@ bool Walker::pathExist(const std::string& path) {
  * @param path path to directory
  * @param files vector of collected files
  */
-void Walker::fillFiles(const std::string& path, std::vector<std::string>& files) {
+void Walker::fillFiles(const std::string& path, std::vector <std::string>& files) {
     if (pathExist(path)) {
         int fd = open(path.c_str(), O_RDONLY | O_DIRECTORY);
         if (fd == -1) {
@@ -124,7 +124,7 @@ std::string Walker::getNameFromPath(const std::string& path) {
 }
 
 bool Walker::isValidName(char* nameOfFile) {
-    std::vector<std::string> notValid = {".", ".."};
+    std::vector <std::string> notValid = {".", ".."};
     for (const auto& name: notValid) {
         if (strcmp(name.c_str(), nameOfFile) == 0) {
             return false;
@@ -134,35 +134,39 @@ bool Walker::isValidName(char* nameOfFile) {
 }
 
 void Walker::withName(const std::string& fileName) {
+    name = fileName;
     addFilter([&](const std::string& path) {
         auto current = getNameFromPath(path);
-        return current == fileName;
+        return current == name;
     });
 }
 
 void Walker::withInod(ino_t size) {
+    inod = size;
     addFilter([&](const std::string& path) {
         struct stat sb{};
         if (stat(path.c_str(), &sb) == 0) {
-            return size == sb.st_ino;
-
+            return inod == sb.st_ino;
         }
         return false;
     });
 }
 
 void Walker::withNLinks(__nlink_t size) {
+    nlinks = size;
     addFilter([&](const std::string& path) {
         struct stat sb{};
         if (stat(path.c_str(), &sb) == 0) {
-            return size == sb.st_ino;
+            return nlinks == sb.st_nlink;
 
         }
         return false;
     });
 }
 
-void Walker::withSize(char& op, __off_t& size) {
+void Walker::withSize(char sizeOp, __off_t fileSize) {
+    op = sizeOp;
+    size = fileSize;
     addFilter([&](const std::string& path) {
         struct stat sb{};
         if (stat(path.c_str(), &sb) == 0) {
@@ -194,7 +198,7 @@ void Walker::exec(std::string& exec) {
     execFromHw1({exec, result[0]});
 }
 
-int Walker::execFromHw1(std::vector<std::string> args) {
+int Walker::execFromHw1(std::vector <std::string> args) {
     pid_t pid;
     int status = 0;
 

@@ -41,7 +41,7 @@ public:
 
     void withNLinks(__nlink_t size);
 
-    void withSize(char& op, __off_t& size);
+    void withSize(char op, __off_t size);
 
     void printResult();
 
@@ -59,11 +59,20 @@ private:
 
     static bool isValidName(char* name);
 
-//    struct stat sb;
     std::vector<std::string> result;
     std::string basePath;
     std::vector<std::function<bool(const std::string&)>> filters;
 
+    // for inod filter
+    ino_t inod;
+    // for name filter
+    std::string name;
+    // for hard link filter
+    __nlink_t nlinks;
+    // for size filter
+    char op;
+    __off_t size;
+    
 
     static bool pathExist(const std::string& path);
 

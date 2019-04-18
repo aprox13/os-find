@@ -19,11 +19,6 @@ int main(int argc, char **argv) {
     arguments.addArgument("nlinks", 1);
     arguments.addArgument("exec", 1);
 
-
-    int inum, nlinks;
-    std::string name;
-    char op;
-    long int size;
     try {
         arguments.parse(argv);
 //        arguments.parse("pr /home/ifkbhit/Desktop/test -name EmptyJava.java -exec /usr/bin/sha1sum");
@@ -39,12 +34,10 @@ int main(int argc, char **argv) {
 
 
     if (arguments.exist("inum")) {
-        inum = std::stoi(arguments["inum"]);
-        walker.withInod(inum);
+        walker.withInod(std::stoi(arguments["inum"]));
     }
     if (arguments.exist("name")) {
-        name = arguments["name"];
-        walker.withName(name);
+        walker.withName(arguments["name"]);
     }
     if (arguments.exist("size")) {
         auto s = arguments["size"];
@@ -52,14 +45,14 @@ int main(int argc, char **argv) {
             std::cout << "Wrong argument size\n";
             return 0;
         }
-        op = s[0];
-        size = std::stol(s.substr(1));
+        char op = s[0];
+        __off_t size = std::stol(s.substr(1));
         walker.withSize(op, size);
 
     }
     if (arguments.exist("nlinks")) {
-        nlinks = std::stoi(arguments["nlinks"]);
-        walker.withNLinks(nlinks);
+	std::cout << "Find with nlinks" << arguments["nlinks"] << '\n';
+	    walker.withNLinks(std::stoi(arguments["nlinks"]));
     }
 
     int matches = walker.walk();
